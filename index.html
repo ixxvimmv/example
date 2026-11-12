@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estimated Amortization Simulator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+    <div class="header-inner">
+        <img src="img/dmci-logo.png" alt="DMCI Homes Logo">
+    </div>
+</header>
+
+<section class="band">
+    <div class="band-inner">
+        <h1>Estimated Amortization Simulator</h1>
+        <p>Estimate your monthly payment, the income it requires, and your loan maturity age.</p>
+    </div>
+</section>
+
+<div class="page">
+
+
+    <div class="main-wrapper">
+
+        <aside class="rate-panel" aria-labelledby="rate-title">
+            <h2 id="rate-title">Fixed period rates</h2>
+            <p class="rate-intro">The lower your rate, the shorter the period it stays fixed.</p>
+
+            <div class="rate-card" data-years="1">
+                <div class="rate">6.00% – 6.49%</div>
+                <div class="period">Fixed for 1 year</div>
+            </div>
+            <div class="rate-card" data-years="3">
+                <div class="rate">6.50% – 6.99%</div>
+                <div class="period">Fixed for 3 years</div>
+            </div>
+            <div class="rate-card" data-years="5">
+                <div class="rate">7.00% – 8.00%</div>
+                <div class="period">Fixed for 5 years</div>
+            </div>
+        </aside>
+
+        <main class="container">
+
+            <form id="calcForm" novalidate>
+                <div class="field-grid">
+
+                    <div class="field">
+                        <label for="age">Age</label>
+                        <input type="number" id="age" placeholder="18 to 64" min="18" max="64" step="1" aria-describedby="age-error">
+                        <span class="error" id="age-error" role="alert"></span>
+                    </div>
+
+                    <div class="field">
+                        <label for="tcp">Total Contract Price (TCP)</label>
+                        <div class="input-prefix">
+                            <span aria-hidden="true">₱</span>
+                            <input type="text" id="tcp" placeholder="Enter TCP" inputmode="decimal" autocomplete="off" aria-describedby="tcp-error">
+                        </div>
+                        <span class="error" id="tcp-error" role="alert"></span>
+                    </div>
+
+                    <div class="field">
+                        <label for="dpPercent">Down Payment (%)</label>
+                        <input type="number" id="dpPercent" placeholder="Example: 20" min="0" max="100" step="0.01" aria-describedby="dpPercent-hint dpPercent-error">
+                        <span class="hint" id="dpPercent-hint"></span>
+                        <span class="error" id="dpPercent-error" role="alert"></span>
+                    </div>
+
+                    <div class="field">
+                        <label for="advancePayment">Advance Payment</label>
+                        <div class="input-prefix">
+                            <span aria-hidden="true">₱</span>
+                            <input type="text" id="advancePayment" placeholder="Example: 100,000" inputmode="decimal" autocomplete="off" aria-describedby="advancePayment-error">
+                        </div>
+                        <span class="error" id="advancePayment-error" role="alert"></span>
+                    </div>
+
+                    <div class="field">
+                        <label for="interest">Fixed Interest Rate (% per year)</label>
+                        <input type="number" id="interest" placeholder="Between 6 and 8" min="6" max="8" step="0.01" aria-describedby="interest-hint interest-error">
+                        <span class="hint" id="interest-hint">Accepted rates: 6.00% to 8.00%.</span>
+                        <span class="error" id="interest-error" role="alert"></span>
+                    </div>
+
+                    <div class="field">
+                        <label for="years">Loan Term (Years)</label>
+                        <input type="number" id="years" placeholder="Example: 20" min="0.1" step="0.1" aria-describedby="years-hint years-error">
+                        <span class="hint" id="years-hint">Enter your age to see the maximum term.</span>
+                        <span class="error" id="years-error" role="alert"></span>
+                    </div>
+
+                </div>
+
+                <div class="actions">
+                    <button type="submit" class="btn-primary">Compute</button>
+                    <button type="button" class="btn-secondary" id="resetBtn">Reset</button>
+                </div>
+                <p class="disclaimer">Estimates only. Actual loan approval and income requirements may vary.</p>
+            </form>
+
+            <section class="result" id="result" hidden aria-live="polite" tabindex="-1">
+                <p class="print-only" id="printDate"></p>
+
+                <div class="hero">
+                    <span class="hero-label">Estimated monthly amortization</span>
+                    <span class="hero-figure"><span class="peso">₱</span><span id="monthly"></span></span>
+                    <span class="hero-note">Requires a gross monthly income of about ₱ <span id="income"></span></span>
+                </div>
+
+                <dl class="rows">
+                    <div class="row"><dt>Total Contract Price</dt><dd>₱ <span id="resultTCP"></span></dd></div>
+                    <div class="row"><dt>Total payments made</dt><dd>₱ <span id="totalPayments"></span></dd></div>
+                    <div class="row"><dt>Loanable amount</dt><dd>₱ <span id="loanableAmount"></span></dd></div>
+                    <div class="row"><dt>Interest rate</dt><dd><span id="resultRate"></span>% <span class="muted" id="resultFixed"></span></dd></div>
+                    <div class="row"><dt>Loan maturity</dt><dd><span id="maturityAge"></span> years old</dd></div>
+                </dl>
+
+                <div id="qualification" class="qualification"></div>
+
+                <div class="actions result-actions">
+                    <button type="button" class="btn-primary" id="printBtn">Print / Save as PDF</button>
+                </div>
+            </section>
+
+            <p class="footer">Maturity age is limited to 65 years old. Estimated values only.</p>
+        </main>
+
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
